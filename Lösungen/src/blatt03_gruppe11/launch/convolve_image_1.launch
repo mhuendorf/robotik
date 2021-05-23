@@ -1,0 +1,6 @@
+<launch>
+  <node name="convolve_image" pkg="blatt03_gruppe11" type="convolve_image" output="screen">
+    <param name="kernel" value="[0,0,0, 1,1,1, 0,0,0]" />
+    <remap from="imgOut" to="outputImage"/>
+  </node>
+</launch>

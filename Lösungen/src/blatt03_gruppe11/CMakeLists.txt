@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(blatt03gruppe11)
+project(blatt03_gruppe11)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -14,7 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   tf2_msgs
+  tf2_geometry_msgs
   tf2_ros
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
@@ -139,6 +141,12 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/blatt03gruppe11_node.cpp)
 
+add_executable(robo_control src/robo_control.cpp)
+target_link_libraries(robo_control ${catkin_LIBRARIES})
+
+add_executable(convolve_image src/convolve_image.cpp)
+target_link_libraries(convolve_image ${catkin_LIBRARIES})
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -208,6 +216,3 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-add_executable(robo_control src/robo_control.cpp)
-target_link_libraries(robo_control ${catkin_LIBRARIES})
