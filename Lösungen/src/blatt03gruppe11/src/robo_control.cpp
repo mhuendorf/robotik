@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+bool turning;
+int turning_pubs;
 
 void callback(const sensor_msgs::LaserScan& msg, ros::NodeHandle& nh, ros::Publisher& pub) {
     /* LaserScan:
@@ -28,16 +30,16 @@ void callback(const sensor_msgs::LaserScan& msg, ros::NodeHandle& nh, ros::Publi
     geometry_msgs::Vector3 angular;
 
 
-    int points_in_range = 100;
+    const float range_in_front = 0.5;
+    const float look_goal_distance = 0.5;
+    const int points_in_front = 100;
+    const int number_of_considered_neighbors = points_in_front;
 
-    //int laser_entry_length = (sizeof(msg.ranges)/sizeof(*msg.ranges));
-    ROS_INFO_STREAM(/*laser_entry_length << " " << */msg.ranges.size());
-
-    // look in front and see if direction needs to change -> if any laserpoint in front is closer than .5m change direction
+    // look in front and see if direction needs to change -> if any laserpoint in front is closer than .7m change direction
     bool front_ok = true;
-    for (size_t i = msg.ranges.size()/2-points_in_range/2; i < msg.ranges.size()/2+points_in_range/2; i++)
+    for (size_t i = msg.ranges.size()/2-points_in_front/2; i < msg.ranges.size()/2+points_in_front/2; i++)
     {
-        if (msg.ranges[i] < 0.5)
+        if (msg.ranges[i] < range_in_front)
         {
             front_ok = false;
             break;
@@ -45,40 +47,65 @@ void callback(const sensor_msgs::LaserScan& msg, ros::NodeHandle& nh, ros::Publi
         
     }
 
-    ROS_INFO_STREAM("front_ok: " << front_ok ? "true" : "false");
-
-    if (!front_ok)
+    if (!front_ok && !turning)
     {
         // calculate angle in which the 7 neighboring points are the furthest and no single point of it is closer than .5m
         float max = 0;
         float angle = 0;
-        for (size_t i = points_in_range/2; i < msg.ranges.size()-points_in_range/2; i++)
+        bool turning_manoeuvre = true;
+        for (size_t i = number_of_considered_neighbors/2; i < msg.ranges.size()-number_of_considered_neighbors/2; i++)
         {
             float add = 0;
             bool isValid = true;
-            for (size_t j = 0; j < points_in_range; j++)
+            for (size_t j = 0; j < number_of_considered_neighbors; j++)
             {
-                //ROS_INFO_STREAM(i-3+j);
-                if (msg.ranges[i-points_in_range/2+j] < 0.5) isValid = false;
-                add += msg.ranges[i-points_in_range/2+j];
+                if (msg.ranges[i-number_of_considered_neighbors/2+j] < look_goal_distance) isValid = false;
+                add += msg.ranges[i-number_of_considered_neighbors/2+j];
             }
             if (isValid && max < add)
             {
+                turning_manoeuvre = false;
                 max = add;
                 angle = msg.angle_min + msg.angle_increment * i;
             }
         }
 
+        // for pretty output
+        std::cout << "                        \r";
+
         // if there is no valid direction, perform a turn
-        if (max == 0 || angle == 0)
+        if (turning_manoeuvre || (angle > -msg.angle_increment && angle < msg.angle_increment))
         {
+            std::cout << "bitte wenden" << "\r";
+            turning_pubs = 12;
+            turning = true;
             angular.z = 1;
         } else {
+            if (angle < 0)
+            {
+                std::cout << "links rum" << "\r";
+            } else {
+                std::cout << "rechts rum" << "\r";
+            }
         angular.z = angle;
         }
     } else {
-        linear.x = 0.5;
+        if (turning)
+        {
+            std::cout << "bitte wenden" << "\r";
+            angular.z = 1;
+            turning_pubs -=1;
+            if (turning_pubs == 0)
+            {
+                turning = false;
+            }
+            
+        } else {
+            std::cout << "einfach cruisen" << "\r";
+            linear.x = 0.5;
+        }
     }
+    std::cout.flush();
 
     tmsg.linear = linear;
     tmsg.angular = angular;
@@ -109,7 +136,8 @@ int main(int argc, char **argv) {
   ros::Subscriber sub = nh.subscribe<sensor_msgs::LaserScan, const sensor_msgs::LaserScan&>("scan", 1000, std::bind(callback, std::placeholders::_1, nh, pub));
 
   // information output
-  ROS_INFO("automatic control started");
+  ROS_INFO("automatic control started:");
   ros::spin();
+  turning = false;
   return 0;
 }
