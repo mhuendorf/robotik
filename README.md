@@ -4,6 +4,7 @@ The current members are:
   * Felix Häusler
   * Jens Osterhues
   * Marcel Hündorf
+  * Paul Hermann
 
 ## Tasks
 All tasks can be found [here](https://github.com/mhuendorf/robotik/tree/main/Übungsblätter "Übungsblätter")

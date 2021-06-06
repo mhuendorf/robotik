@@ -1,0 +1,14 @@
+<launch>
+  <!-- Gauss-Kernel -->
+  <node name="convolve_image_gs" pkg="blatt03_gruppe11" type="convolve_image" output="screen">
+    <param name="kernel" value="[1,4,7,4,1, 4,16,26,16,4, 7,26,41,26,7, 4,16,26,16,4, 1,4,7,4,1]" />
+    <remap from="imgOut" to="outputImageGaussian"/>
+  </node>
+
+  <!-- Laplace-Kernel -->
+  <node name="convolve_image_lp" pkg="blatt03_gruppe11" type="convolve_image" output="screen">
+    <param name="kernel" value="[0,0,-1,0,0, 0,-1,-2,-1,0, -1,-2,16,-2,-1, 0,-1,-2,-1,0, 0,0,-1,0,0]" />
+    <remap from="imgOut" to="outputImageLaplace"/>
+    <remap from="outputImageGaussian" to="/camera/rgb/image_rect_color"/>
+  </node>
+</launch>
