@@ -124,3 +124,23 @@ Konvergiert gegen $0.9$, da die Wahrscheinlichkeit, dass ein Regenschirm mitgeno
 > Betrachten Sie nun den Fall, dass Sie den ”Direktor“ nach Tag 2 nicht mehr sehen. Welche Vorhersage für die Wahrscheinlichkeit von Regen können Sie nun für Tag 3 und 4 machen? Berechnen Sie auch hier den Fixpunkt, gegen den die Wahrscheinlichkeit für Regen konvergiert, wenn die Vorhersage ohne zusätzliche Beobachtungen weiter in die Zukunft gelegt wird.
 
 Konvergiert gegen $0.5$, da der Sensor (Direktor) keinen Einfluss auf die Korrektur hat und entsprechend sich der Wert mit $t\to\infin$ auf die in der Aufgabenstellung gegebenen 50\% einpendeln wird.
+
+$$
+\begin{aligned}
+\overline{\operatorname{Bel}}(R_3)&=P(R_3|R_2)\cdot \operatorname{Bel}(R_2)+ P(R_3|S_2)\cdot \operatorname{Bel}(S_2) \\
+&=0.7\cdot 0.883 + 0.3\cdot 0.117 \\
+&=0.653 \\ \\
+
+\overline{\operatorname{Bel}}(S_3)&=P(S_3|S_2)\cdot \operatorname{Bel}(S_2)+ P(S_3|R_2)\cdot \operatorname{Bel}(R_2) \\
+&=0.7\cdot 0.117 + 0.3\cdot 0.883 \\
+&=0.347 \\ \\
+
+\overline{\operatorname{Bel}}(R_4)&=P(R_4|R_3)\cdot \overline{\operatorname{Bel}}(R_3)+ P(R_4|S_3)\cdot \overline{\operatorname{Bel}}(S_3) \\
+&=0.7\cdot 0.653 + 0.3\cdot 0.347 \\
+&=0.561 \\ \\
+
+\overline{\operatorname{Bel}}(S_4)&=P(S_4|S_3)\cdot \overline{\operatorname{Bel}}(S_3)+ P(S_4|R_3)\cdot \overline{\operatorname{Bel}}(R_3) \\
+&=0.7\cdot 0.347 + 0.3\cdot 0.653 \\
+&=0.439
+\end{aligned}
+$$
