@@ -106,7 +106,7 @@ $$
 
 > Im Startzustand befinde sich der Roboter an $(0, 0, 0)$, der Luftdruck sei 1000 hPa, und die Anzahl der Bundesländer sei 16. Berechnen Sie den Zustand (mehrdimensionaler Mittelwert und Standardabweichung), der sich ergibt, wenn der Roboter erst um 0.3 rad rotiert und anschließend um 2 Einheiten x und 3 Einheiten z translatiert. Geben Sie für alle vorkommenden Zustände die a-priori-Werte für Mittelwert und Varianz sowie die entsprechenden Kalman-Gewinnmatrizen an.
 
-#### Rotation
+#### Rotation (Teil 1)
 
 $$
 x_0:=\begin{pmatrix}
@@ -188,17 +188,18 @@ K_{1}&=\overline{\Sigma}_{1}H^T(H\overline{\Sigma}_{1}H^T+\Sigma_z)^{-1} \\
 0 & 0 & 1.02 & 0 & 0 \\
 0 & 0 & 0 & 1.001 & 0 \\
 0 & 0 & 0 & 0 & 1 
-\end{pmatrix}\cdot H^T \cdot\left(\begin{pmatrix}
+\end{pmatrix}\cdot H^T \cdot(\begin{pmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 1.02 & 0 \\
 0 & 0 & 0 & 1.001
-\end{pmatrix}+ \begin{pmatrix}
+\end{pmatrix}+ \\
+&\begin{pmatrix}
 \sigma_x^2 & 0 & 0 & 0 \\
 0 & \sigma_z^2 & 0 & 0 \\
 0 & 0 & \sigma_\theta^2 & 0  \\
 0 & 0 & 0 & \sigma_\lambda^2 \\
-\end{pmatrix}\right)^{-1} \\
+\end{pmatrix})^{-1} \\
 &=\begin{pmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
@@ -212,11 +213,11 @@ K_{1}&=\overline{\Sigma}_{1}H^T(H\overline{\Sigma}_{1}H^T+\Sigma_z)^{-1} \\
 0 & 0 & 0 & \frac{1}{1.001+\sigma_\lambda^2} \\
 \end{pmatrix} \\
 &=\begin{pmatrix}
-\frac{1}{\sigma_x^2+1} & 0 & 0 & 0  & 0 \\
-0 & \frac{1}{\sigma_z^2+1} & 0 & 0 & 0 \\
-0 & 0 & \frac{1.02}{1.02+\sigma_\theta^2} & 0 & 0 \\
-0 & 0 & 0 & \frac{1.001}{1.001+\sigma_\lambda^2} & 0 \\
-0 & 0 & 0 & 0 & 0
+\frac{1}{\sigma_x^2+1} & 0 & 0 & 0 \\
+0 & \frac{1}{\sigma_z^2+1} & 0 & 0 \\
+0 & 0 & \frac{1.02}{1.02+\sigma_\theta^2} & 0  \\
+0 & 0 & 0 & \frac{1.001}{1.001+\sigma_\lambda^2} \\
+0 & 0 & 0 & 0
 \end{pmatrix}
 \end{aligned}
 $$
@@ -234,8 +235,7 @@ $$
 $$
 \begin{aligned}
 x_{1}&=\overline{x}_{1}+K_{1}(z-H\overline{x}_{1}) \\
-&=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ K_1\cdot \left( \begin{pmatrix}x_1\\z_1\\\theta_1\\\lambda_1\end{pmatrix} - \begin{pmatrix}0\\0\\0.3\\1000\end{pmatrix} \right) \\ \\
-&\text{Dimensionsfehler: 5x1, 5x5, 4x1}~(\to 5\text{x}1~\text{mit 0}) \\ \\
+&=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ K_1\cdot \left( \begin{pmatrix}x_1\\z_1\\\theta_1\\\lambda_1\end{pmatrix} - \begin{pmatrix}0\\0\\0.3\\1000\end{pmatrix} \right) \\
 &=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ \begin{pmatrix} \frac{x_1}{\sigma_x^2+1}  \\ \frac{z_1}{\sigma_z^2+1} \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2} \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2} \\ 0 \end{pmatrix} \\
 &=\begin{pmatrix} \frac{x_1}{\sigma_x^2+1}  \\ \frac{z_1}{\sigma_z^2+1} \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2}+0.3 \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2}+1000 \\ 16 \end{pmatrix}
 \end{aligned}
@@ -251,8 +251,7 @@ $$
 
 $$
 \begin{aligned}
-\Sigma_{1}&=(I_5-K_{1}H)\overline{\Sigma}_{1} \\ \\
-&\text{Dimensionsfehler K und H }\to\text{ Nullzeile} \\ \\
+\Sigma_{1}&=(I_5-K_{1}H)\overline{\Sigma}_{1} \\
 &=\begin{pmatrix}
 1-\frac{1}{\sigma_x^2+1} & 0 & 0 & 0  & 0 \\
 0 & 1-\frac{1}{\sigma_z^2+1} & 0 & 0 & 0 \\
@@ -277,6 +276,71 @@ $$
 \end{aligned}
 $$
 
-#### Translation
+#### Translation (Teil 2)
 
-TBD
+$$
+\begin{aligned}
+\overline{x}_{2}&=Ax_1+B \begin{pmatrix}2\\3\\0\end{pmatrix} \\
+&=x_1 + B \begin{pmatrix}2\\3\\0\end{pmatrix} \\
+&=\begin{pmatrix} \frac{x_1}{\sigma_x^2+1}  \\ \frac{z_1}{\sigma_z^2+1} \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2}+0.3 \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2}+1000 \\ 16 \end{pmatrix}+\begin{pmatrix}2\\3\\0\\0\\0\end{pmatrix} \\
+&=\begin{pmatrix} \frac{x_1}{\sigma_x^2+1}+2  \\ \frac{z_1}{\sigma_z^2+1}+3 \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2}+0.3 \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2}+1000 \\ 16 \end{pmatrix}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\overline{\Sigma}_{2}&=A\Sigma_1 A^T+\Sigma_{u_{TR}} \\
+&=\begin{pmatrix}
+\frac{\sigma_x^2}{\sigma_x^2+1} & 0 & 0 & 0  & 0 \\
+0 & \frac{\sigma_z^2}{\sigma_z^2+1} & 0 & 0 & 0 \\
+0 & 0 & \frac{1.02\sigma_\theta^2}{1.02+\sigma_\theta^2} & 0 & 0 \\
+0 & 0 & 0 & \frac{1.001\sigma_\lambda^2}{1.001+\sigma_\lambda^2} & 0 \\
+0 & 0 & 0 & 0 & 1
+\end{pmatrix}+\begin{pmatrix}
+0.5 & 0 & 0 & 0 & 0 \\
+0 & 0.5 & 0 & 0 & 0 \\
+0 & 0 & 0.01 & 0 & 0 \\
+0 & 0 & 0 & 0.001 & 0 \\
+0 & 0 & 0 & 0 & 0 
+\end{pmatrix} \\
+&=\begin{pmatrix}
+\frac{\sigma_x^2}{\sigma_x^2+1}+0.5 & 0 & 0 & 0  & 0 \\
+0 & \frac{\sigma_z^2}{\sigma_z^2+1}+0.5 & 0 & 0 & 0 \\
+0 & 0 & \frac{1.02\sigma_\theta^2}{1.02+\sigma_\theta^2}+0.01 & 0 & 0 \\
+0 & 0 & 0 & \frac{1.001\sigma_\lambda^2}{1.001+\sigma_\lambda^2}+0.001 & 0 \\
+0 & 0 & 0 & 0 & 1
+\end{pmatrix}
+\end{aligned}
+$$
+
+**Kalman-Gewinnmatrix:**
+
+$$
+\begin{aligned}
+K_{2}&=\overline{\Sigma}_{2}H^T(H\overline{\Sigma}_{2}H^T+\Sigma_z)^{-1} \\
+&=\begin{pmatrix}
+\frac{\sigma_x^2}{\sigma_x^2+1}+0.5 & 0 & 0 & 0   \\
+0 & \frac{\sigma_z^2}{\sigma_z^2+1}+0.5 & 0 & 0  \\
+0 & 0 & \frac{1.02\sigma_\theta^2}{1.02+\sigma_\theta^2}+0.01 & 0  \\
+0 & 0 & 0 & \frac{1.001\sigma_\lambda^2}{1.001+\sigma_\lambda^2}+0.001 \\
+0 & 0 & 0 & 0
+\end{pmatrix} \cdot( \\
+&\begin{pmatrix}
+\frac{\sigma_x^2}{\sigma_x^2+1}+0.5 & 0 & 0 & 0   \\
+0 & \frac{\sigma_z^2}{\sigma_z^2+1}+0.5 & 0 & 0  \\
+0 & 0 & \frac{1.02\sigma_\theta^2}{1.02+\sigma_\theta^2}+0.01 & 0  \\
+0 & 0 & 0 & \frac{1.001\sigma_\lambda^2}{1.001+\sigma_\lambda^2}+0.001
+\end{pmatrix}+ \\
+&\begin{pmatrix}
+\sigma_x^2 & 0 & 0 & 0 \\
+0 & \sigma_z^2 & 0 & 0 \\
+0 & 0 & \sigma_\theta^2 & 0  \\
+0 & 0 & 0 & \sigma_\lambda^2 \\
+\end{pmatrix})^{-1} \\
+&=
+\end{aligned}
+$$
+
+![](assets/Sol1.png)
+
+> **NB:** x,y,z,w in der letzten Matrix entsprechen $\sigma_x$, $\sigma_z$, $\sigma_\theta$, $\sigma_\lambda$.
