@@ -213,11 +213,11 @@ K_{1}&=\overline{\Sigma}_{1}H^T(H\overline{\Sigma}_{1}H^T+\Sigma_z)^{-1} \\
 0 & 0 & 0 & \frac{1}{1.001+\sigma_\lambda^2} \\
 \end{pmatrix} \\
 &=\begin{pmatrix}
-\frac{1}{\sigma_x^2+1} & 0 & 0 & 0  & 0 \\
-0 & \frac{1}{\sigma_z^2+1} & 0 & 0 & 0 \\
-0 & 0 & \frac{1.02}{1.02+\sigma_\theta^2} & 0 & 0 \\
-0 & 0 & 0 & \frac{1.001}{1.001+\sigma_\lambda^2} & 0 \\
-0 & 0 & 0 & 0 & 0
+\frac{1}{\sigma_x^2+1} & 0 & 0 & 0 \\
+0 & \frac{1}{\sigma_z^2+1} & 0 & 0 \\
+0 & 0 & \frac{1.02}{1.02+\sigma_\theta^2} & 0  \\
+0 & 0 & 0 & \frac{1.001}{1.001+\sigma_\lambda^2} \\
+0 & 0 & 0 & 0
 \end{pmatrix}
 \end{aligned}
 $$
@@ -235,8 +235,7 @@ $$
 $$
 \begin{aligned}
 x_{1}&=\overline{x}_{1}+K_{1}(z-H\overline{x}_{1}) \\
-&=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ K_1\cdot \left( \begin{pmatrix}x_1\\z_1\\\theta_1\\\lambda_1\end{pmatrix} - \begin{pmatrix}0\\0\\0.3\\1000\end{pmatrix} \right) \\ \\
-&\text{Dimensionsfehler: 5x1, 5x5, 4x1}~(\to 5\text{x}1~\text{mit 0}) \\ \\
+&=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ K_1\cdot \left( \begin{pmatrix}x_1\\z_1\\\theta_1\\\lambda_1\end{pmatrix} - \begin{pmatrix}0\\0\\0.3\\1000\end{pmatrix} \right) \\
 &=\begin{pmatrix}0\\0\\0.3\\1000\\16\end{pmatrix}+ \begin{pmatrix} \frac{x_1}{\sigma_x^2+1}  \\ \frac{z_1}{\sigma_z^2+1} \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2} \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2} \\ 0 \end{pmatrix} \\
 &=\begin{pmatrix} \frac{x_1}{\sigma_x^2+1}  \\ \frac{z_1}{\sigma_z^2+1} \\ \frac{1.02\theta_1-0.306}{1.02+\sigma_\theta^2}+0.3 \\ \frac{1.001\lambda_1-1001}{1.001+\sigma_\lambda^2}+1000 \\ 16 \end{pmatrix}
 \end{aligned}
@@ -252,8 +251,7 @@ $$
 
 $$
 \begin{aligned}
-\Sigma_{1}&=(I_5-K_{1}H)\overline{\Sigma}_{1} \\ \\
-&\text{Dimensionsfehler K und H }\to\text{ Nullzeile} \\ \\
+\Sigma_{1}&=(I_5-K_{1}H)\overline{\Sigma}_{1} \\
 &=\begin{pmatrix}
 1-\frac{1}{\sigma_x^2+1} & 0 & 0 & 0  & 0 \\
 0 & 1-\frac{1}{\sigma_z^2+1} & 0 & 0 & 0 \\
@@ -344,3 +342,5 @@ K_{2}&=\overline{\Sigma}_{2}H^T(H\overline{\Sigma}_{2}H^T+\Sigma_z)^{-1} \\
 $$
 
 ![](assets/Sol1.png)
+
+> **NB:** x,y,z,w in der letzten Matrix entsprechen $\sigma_x$, $\sigma_z$, $\sigma_\theta$, $\sigma_\lambda$.
