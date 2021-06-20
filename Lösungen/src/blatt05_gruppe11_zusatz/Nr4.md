@@ -1,401 +1,141 @@
-# Aufgabe 4
+# Aufgabe 5.4
 
-### Teil A
+<!-- NOTE: https://www.tu-chemnitz.de/informatik/KI/edu/robotik/ws2012/robotik_6_2.pdf -->
 
-> Berechnen Sie die Aufenthaltswahrscheinlichkeit fur den Roboter für jede Zelle nach jedem einzelnen Schritt. In welcher Zelle ist demnach der Roboter vermutlich gestartet?
+## (a)
 
-**Gegeben:**
+> Berechnen Sie die Aufenthaltswahrscheinlichkeit fur den Roboter fu ̈r jede Zelle nach jedem einzelnen Schritt. In welcher Zelle ist demnach der Roboter vermutlich gestartet?
 
-Roboter detektiert Landmarke:
+### 1. Der Roboter detektiert eine Landmarke.
 
-|           | $D$  |
-| --------- | ----- |
-| $L$       | $0.7$ |
-| $\lnot L$ | $0.3$ |
+Für alle Felder mit Landmarke trage 0,7 ein und für alle ohne 0,25.
 
-Roboter detektiert Landmarke fälschlicherweise:
+Danach normalisiere die Werte.
 
-|           | $\lnot D$  |
-| --------- | ----- |
-| $L$       | $0.25$ |
-| $\lnot L$ | $0.75$ |
+![Alt text](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_1.png)
 
-NB: $L$ und $\lnot D$ mit $0.25$: Eine Landmarke wird fälschlicherweise mit 25% Wahrscheinlichkeit detektiert, obwohl keine existiert.
+### 2. Der Roboter bewegt sich 2 Zellen im Uhrzeigersinn.
 
-$$
-\begin{aligned}
-\operatorname{Bel}(x_0)=\frac{1}{16}
-\end{aligned}
-$$
+Dafür müssen einfach alle Wahrscheinlichkeiten um 2 Felder im Uhrzeigersinn verschoben werden. Es wird angenommen, dass die Bewegung zu 100% verlässlich ist, da dazu nichts in der Aufgabe steht.
 
-**1. Der Roboter detektiert eine Landmarke:**
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_2.png)
 
-$$
-\begin{aligned}
-\overline{\operatorname{Bel}}(x_0)=\frac{1}{16}
-\end{aligned}
-$$
+### 3. Der Roboter detektiert wieder eine Landmarke.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_1)&= \\
-  \operatorname{Bel}(x_4)&= \\
-  \operatorname{Bel}(x_6)&= \\
-  \operatorname{Bel}(x_9)&= \\
-  \operatorname{Bel}(x_{13})&=n\cdot 0.7\cdot\frac{1}{16} \\
-  &=n\cdot 0.04375 \\
-  &\to 2.56\cdot 0.04375=0.112
-\end{aligned}
-$$
+Zunächst wird der nicht normalisierte Belief ausgerechnet:
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_2)&= \\
-  \operatorname{Bel}(x_3)&= \\
-  \operatorname{Bel}(x_5)&= \\
-  \operatorname{Bel}(x_7)&= \\
-  \operatorname{Bel}(x_8)&= \\
-  \operatorname{Bel}(x_{10})&= \\
-  \operatorname{Bel}(x_{11})&= \\
-  \operatorname{Bel}(x_{12})&= \\
-  \operatorname{Bel}(x_{14})&= \\
-  \operatorname{Bel}(x_{15})&= \\
-  \operatorname{Bel}(x_{16})&=n\cdot 0.25\cdot\frac{1}{16} \\
-  &=n\cdot 0.01563 \\
-  &\to 2.56\cdot 0.01563=0.04
-\end{aligned}
-$$
+- für all Felder ohne Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass falsch detektiert wurde (0,25).
 
-Normalisieren:
+- für alle Felder mit Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass richtig detektiert wurde (0,7).
 
-$$
-\begin{aligned}
-  1&=n(5\cdot 0.04375+11\cdot 0.01563) \\
-  n&=2.56
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_3.1.png)
 
-**2. Der Roboter bewegt sich 2 Zellen im Uhrzeigersinn:**
+Anschließend müssen alle Werte normalisiert werden. Für $n$ gilt:
 
 $$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_3)&= \\
-  \overline{\operatorname{Bel}}(x_6)&= \\
-  \overline{\operatorname{Bel}}(x_8)&= \\
-  \overline{\operatorname{Bel}}(x_{11})&= \\
-  \overline{\operatorname{Bel}}(x_{15})&=0.112
-\end{aligned}
-$$
+1=n\cdot(7\cdot0,01+8\cdot0,028+0,0784)\\
 
-$$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_4)&= \\
-  \overline{\operatorname{Bel}}(x_5)&= \\
-  \overline{\operatorname{Bel}}(x_7)&= \\
-  \overline{\operatorname{Bel}}(x_9)&= \\
-  \overline{\operatorname{Bel}}(x_{10})&= \\
-  \overline{\operatorname{Bel}}(x_{12})&= \\
-  \overline{\operatorname{Bel}}(x_{13})&= \\
-  \overline{\operatorname{Bel}}(x_{14})&= \\
-  \overline{\operatorname{Bel}}(x_{16})&= \\
-  \overline{\operatorname{Bel}}(x_{1})&= \\
-  \overline{\operatorname{Bel}}(x_{2})&=0.04
-\end{aligned}
+\Rightarrow n\approx 2,685
 $$
 
-**3. Der Roboter detektiert wieder eine Landmarke:**
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_3.2.png)
 
-Beachte den letzten fehlerbehafteten Believe und korrigiere diesen:
+### 4. Der Roboter bewegt sich 4 Zellen im Uhrzeigersinn.
 
-Landmarke und richtig Erkannt:
+Das selbe wie bei dem Schritt 2 nur mit 4 Felden statt 2.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_6)&=n\cdot 0.7\cdot 0.112 \\
-  &=0.0784 \\
-  &\to 2.685\cdot 0.0784 = 0.21
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_4.png)
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_1)&= \\
-  \operatorname{Bel}(x_4)&= \\
-  \operatorname{Bel}(x_9)&= \\
-  \operatorname{Bel}(x_{13})&=n\cdot 0.7\cdot 0.04 \\
-  &=0.028 \\
-  &\to 2.685\cdot 0.028 = 0.0752
-\end{aligned}
-$$
+### 5. Der Roboter detektiert keine Landmarke.
 
-Landmarke fälschlicherweise erkannt:
+Zunächst wird der nicht normalisierte Belief ausgerechnet:
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_3)&= \\
-  \operatorname{Bel}(x_8)&= \\
-  \operatorname{Bel}(x_{11})&= \\
-  \operatorname{Bel}(x_{15})&=n\cdot 0.25\cdot 0.112 \\
-  &=n\cdot 0.028 \\
-  &\to 2.685\cdot 0.028 = 0.0752
-\end{aligned}
-$$
+- für all Felder ohne Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass richtig detektiert wurde ($1 - 0,25=0,75$).
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{2})&= \\
-  \operatorname{Bel}(x_{5})&= \\
-  \operatorname{Bel}(x_{7})&= \\
-  \operatorname{Bel}(x_{10})&= \\
-  \operatorname{Bel}(x_{12})&= \\
-  \operatorname{Bel}(x_{14})&= \\
-  \operatorname{Bel}(x_{16})&=n\cdot 0.25\cdot 0.04 \\
-  &= 0.01 \\
-  &\to 2.685\cdot 0.01 = 0.02685
-\end{aligned}
-$$
+- für alle Felder mit Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass falsch detektiert wurde ($1-0,7=0,3$).
+
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.1.png)
 
-Normalisieren:
+Anschließend müssen wieder alle Werte normalisiert werden. Für n gilt diesmal:
 
 $$
-\begin{aligned}
-  1&=n(0.0784 + 4\cdot 0.028 + 4\cdot 0.028 + 7\cdot 0.01) \\
-  n&=2.685
-\end{aligned}
+1=n\cdot(4\cdot 0,021375+6\cdot 0,056385+0,157878+2\cdot 0,022554+3\cdot 0,008055)\\
+\Rightarrow n\approx 1,536
 $$
 
-**4. Der Roboter bewegt sich 4 Zellen im Uhrzeigersinn:**
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.2.png)
 
-$$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_{10})&=0.21 \\\\
-
-  \overline{\operatorname{Bel}}(x_5)&= \\
-  \overline{\operatorname{Bel}}(x_8)&= \\
-  \overline{\operatorname{Bel}}(x_{13})&= \\
-  \overline{\operatorname{Bel}}(x_{1})&= \\
-  \overline{\operatorname{Bel}}(x_7)&= \\
-  \overline{\operatorname{Bel}}(x_{12})&= \\
-  \overline{\operatorname{Bel}}(x_{15})&= \\
-  \overline{\operatorname{Bel}}(x_{3})&=0.0752 \\\\
-
-  \overline{\operatorname{Bel}}(x_{6})&= \\
-  \overline{\operatorname{Bel}}(x_{9})&= \\
-  \overline{\operatorname{Bel}}(x_{11})&= \\
-  \overline{\operatorname{Bel}}(x_{14})&= \\
-  \overline{\operatorname{Bel}}(x_{16})&= \\
-  \overline{\operatorname{Bel}}(x_{2})&= \\
-  \overline{\operatorname{Bel}}(x_{4})&=0.02685
-\end{aligned}
-$$
+### In welcher Zelle ist demnach der Roboter vermutlich gestartet?
 
-**5. Der Roboter detektiert keine Landmarke:**
+Der Roboter ist vermutlich in Zelle 4 gestartet. Das Folgt daraus, dass es am Wahscheinlichsten ist, dass sich der Roboter am Ende mit einer Wahrscheinlichkeit von ca. 24,3% in der Zelle 10 befindet. Führt man von dieser Zelle die Aktionen in reversiver Reiohenfolge aus (also 6 insgesamt 6 Felder entgegen dem Uhrzeigersinn), landet man bei der Zelle 4. Der Roboter ist also mit einer Wahrscheinlichkiet von ca. 24,3% bei der Zelle 4 gestartet.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{10})&=n\cdot 0.75\cdot 0.21 \\
-  &=n\cdot 0.1575 \\
-  &\to 1.5783\cdot 0.1575 = 0.2486
-\end{aligned}
-$$
+## (b)
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_5)&= \\
-  \operatorname{Bel}(x_8)&= \\
-  \operatorname{Bel}(x_7)&= \\
-  \operatorname{Bel}(x_{12})&= \\
-  \operatorname{Bel}(x_{15})&= \\
-  \operatorname{Bel}(x_{3})&=n\cdot 0.75\cdot 0.0752 \\
-  &=n\cdot 0.0564 \\
-  &\to 1.5783\cdot 0.0564 = 0.089
-\end{aligned}
-$$
+> Nehmen Sie nun an, dass bei einer Bewegung des Roboters zwar bekannt ist, wie weit sich der Roboter bewegt hat, nicht aber in welche Richtung (im oder entgegen dem Uhrzeigersinn). Berechnen Sie auch hier die Aufenthaltswahrscheinlichkeiten.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_1)&= \\
-  \operatorname{Bel}(x_{13})&=n\cdot 0.25\cdot 0.0752 \\
-  &=n\cdot 0.0188 \\
-  &\to 1.5783\cdot 0.0188 = 0.02967
-\end{aligned}
-$$
+### 1. Der Roboter detektiert eine Landmarke.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{11})&= \\
-  \operatorname{Bel}(x_{14})&= \\
-  \operatorname{Bel}(x_{16})&= \\
-  \operatorname{Bel}(x_{2})&=n\cdot 0.75\cdot 0.02685 \\
-  &=0.02 \\
-  &\to 1.5783\cdot 0.02 = 0.031566
-\end{aligned}
-$$
+Hier ist noch alles das selbe wie bei (a).
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{6})&= \\
-  \operatorname{Bel}(x_{9})&= \\
-  \operatorname{Bel}(x_{4})&=n\cdot 0.25\cdot 0.02685 \\
-  &=n\cdot 0.0067 \\
-  &\to 1.5783\cdot 0.0067 = 0.011
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_1.png)
 
-Normalisieren:
+### 2. Der Roboter bewegt sich 2 Zellen.
 
-$$
-\begin{aligned}
-  1&=n(0.1575 + 6\cdot 0.0564 + 2\cdot 0.0188 + 4\cdot 0.02 + 3\cdot 0.0067) \\
-  n&=1.5783
-\end{aligned}
-$$
+Normalerweise müsste man die Wahrscheinlcikeiten der Zellen zwei weiter gegen den Uhrzeigersinn und zwei Felder weiter mit dem Uhrzeigersinn zusammenrechnen und später normalisieren. Das Normalisieren lässt sich hier aber ersparen, da auf jedes Feld immer genau zwei Wahrscheinlichkeiten treffen und daher durch ein halbieren dieser ein Normalisieren überflüssig macht.
 
-**Lösung:**
+- Fall 1: eine Zelle welches 2 entfernt ist wahrsch. 0,04 und andere 0,12: $\frac{0,04+0,112}{2}=0,076$
 
-Der Roboter wird sich mit Wahrscheinlichkeit von ca. 25% in Zelle 10 befinden.
+- Fall 2: beide Zellen welche 2 Felder entfernt sind wahrsch. 0,04: $\frac{2\cdot0,04}{2}=0,04$
 
-### Teil B
+- Fall 3: beide Zellen welche 2 Felder entfernt sind wahrsch. 0,12: $\frac{2\cdot0,12}{2}=0,12$
 
-$$
-\begin{aligned}
-\operatorname{Bel}(x_0)=\frac{1}{16}
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_2b.png)
 
-**1. Der Roboter detektiert eine Landmarke:**
+Weiterhin kann sich hier und auch im Folgenden Arbeit erspart werden, wenn nur eine Hälfte des Problems berechnet wird. Dies ist möglich, da die Karte symetrisch ist und durch die Vernachlässigung von Richtungen das Problem auch. Die symmetrieachse ist im folgenden als gestichelte Linie dargestellt. Beim Normalisieren müssen die Werte der anderen Hälfte dann natürlich mit einbezogen werden.
 
-$$
-\begin{aligned}
-\overline{\operatorname{Bel}}(x_0)=\frac{1}{16}
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Sym.png)
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_1)&= \\
-  \operatorname{Bel}(x_4)&= \\
-  \operatorname{Bel}(x_6)&= \\
-  \operatorname{Bel}(x_9)&= \\
-  \operatorname{Bel}(x_{13})&=n\cdot 0.7\cdot\frac{1}{16} \\
-  &=n\cdot 0.04375 \\
-  &\to 2.56\cdot 0.04375=0.112
-\end{aligned}
-$$
+### 3. Der Roboter detektiert wieder eine Landmarke.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_2)&= \\
-  \operatorname{Bel}(x_3)&= \\
-  \operatorname{Bel}(x_5)&= \\
-  \operatorname{Bel}(x_7)&= \\
-  \operatorname{Bel}(x_8)&= \\
-  \operatorname{Bel}(x_{10})&= \\
-  \operatorname{Bel}(x_{11})&= \\
-  \operatorname{Bel}(x_{12})&= \\
-  \operatorname{Bel}(x_{14})&= \\
-  \operatorname{Bel}(x_{15})&= \\
-  \operatorname{Bel}(x_{16})&=n\cdot 0.25\cdot\frac{1}{16} \\
-  &=n\cdot 0.01563 \\
-  &\to 2.56\cdot 0.01563=0.04
-\end{aligned}
-$$
+Zunächst wird der nicht normalisierte Belief ausgerechnet:
 
-Normalisieren:
+- für all Felder ohne Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass falsch detektiert wurde (0,25).
 
-Siehe oben (Teil A).
+- für alle Felder mit Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass richtig detektiert wurde (0,7).
 
-**2. Der Roboter bewegt sich 2 Zellen im Uhrzeigersinn:**
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_3.1b.png)
 
-$$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_{11})&= \\
-  \overline{\operatorname{Bel}}(x_{15})&=0.112
-\end{aligned}
-$$
+Anschließend müssen alle Werte normalisiert werden. Für n gilt:
 
 $$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_{16})&= \\
-  \overline{\operatorname{Bel}}(x_1)&= \\
-  \overline{\operatorname{Bel}}(x_5)&= \\
-  \overline{\operatorname{Bel}}(x_6)&= \\
-  \overline{\operatorname{Bel}}(x_9)&= \\
-  \overline{\operatorname{Bel}}(x_{10})&= \\
-  \overline{\operatorname{Bel}}(x_{12})&= \\
-  \overline{\operatorname{Bel}}(x_{13})&= \\
-  \overline{\operatorname{Bel}}(x_{14})&=0.04
-\end{aligned}
+1=n\cdot(5\cdot0,01+4\cdot0,019+5\cdot0,028+2\cdot0,0532)\\
+\Rightarrow n\approx 2,685
 $$
 
-Beide:
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_3.2b.png)
 
-$$
-\begin{aligned}
-  \overline{\operatorname{Bel}}(x_4)&=\\
-  \overline{\operatorname{Bel}}(x_6)&= \\
-
-  \overline{\operatorname{Bel}}(x_2)&= \\
-  \overline{\operatorname{Bel}}(x_3)&= \\
-  \overline{\operatorname{Bel}}(x_8)&= \\
-  \overline{\operatorname{Bel}}(x_7)&= 0.04\cdot 0.5+0.112cdot 0.5 \\
-  &= 0.076
-\end{aligned}
-$$
+### 4. Der Roboter bewegt sich 4 Zellen.
 
-**3. Der Roboter detektiert wieder eine Landmarke:**
+Das selbe vorgehen wie bei Schritt zwei, nur werden hier die beiden Zellen, die 4 entfernt sind betrachtet
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{11})&= \\
-  \operatorname{Bel}(x_{15})&=0.112\cdot 0.25=0.028
-\end{aligned}
-$$
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_4b.png)
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_{16})&= \\
-  \operatorname{Bel}(x_5)&= \\
-  \operatorname{Bel}(x_{10})&= \\
-  \operatorname{Bel}(x_{12})&= \\
-  \operatorname{Bel}(x_{14})&=0.04\cdot 0.25=0.01
-\end{aligned}
-$$
+### 5. Der Roboter detektiert keine Landmarke.
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_1)&= \\
-  \operatorname{Bel}(x_6)&= \\
-  \operatorname{Bel}(x_9)&= \\
-  \operatorname{Bel}(x_{13})&=0.04\cdot 0.75=0.028
-\end{aligned}
-$$
+Zunächst wird der nicht normalisierte Belief ausgerechnet:
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_4)&=\\
-  \operatorname{Bel}(x_6)&=0.076\cdot 0.7 = 0.0532\\
-\end{aligned}
-$$
+- für all Felder ohne Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass richtig detektiert wurde (1 - 0,25=0,75).
 
-$$
-\begin{aligned}
-  \operatorname{Bel}(x_2)&= \\
-  \operatorname{Bel}(x_3)&= \\
-  \operatorname{Bel}(x_8)&= \\
-  \operatorname{Bel}(x_7)&=0.076\cdot 0.25=0.019
-\end{aligned}
-$$
+- für alle Felder mit Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass falsch detektiert wurde (1-0,7=0,3).
 
-Normalisieren:
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.1b.png)
 
+Anschließend müssen wieder alle Werte normalisiert werden. Für n gilt diesmal:
+
 $$
-\begin{aligned}
-  1&=(5\cdot 0.028+ 5\cdot 0.01+ 2\cdot 0.0532+ 4\cdot 0.019) \\
-  n&=2,6853
-\end{aligned}
+1=n\cdot(4\cdot 0,06362775+4\cdot 0,04732312+ 2\cdot 0,02919938+ 0,056385
++2\cdot 0,0153045 + 2\cdot 0,01167975+ 0,022554)\\
+\Rightarrow n\approx 1,575
 $$
-
-**4. Der Roboter bewegt sich 4 Zellen im Uhrzeigersinn:**
 
-TBD
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.2b.png)
