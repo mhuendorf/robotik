@@ -119,3 +119,23 @@ $$
 Das selbe vorgehen wie bei Schritt zwei, nur werden hier die beiden Zellen, die 4 entfernt sind betrachtet
 
 ![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_4b.png)
+
+### 5. Der Roboter detektiert keine Landmarke.
+
+Zunächst wird der nicht normalisierte Belief ausgerechnet:
+
+- für all Felder ohne Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass richtig detektiert wurde (1 - 0,25=0,75).
+
+- für alle Felder mit Landmarke: rechne alten Belief mal der Wahrscheinlichkeit, dass falsch detektiert wurde (1-0,7=0,3).
+
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.1b.png)
+
+Anschließend müssen wieder alle Werte normalisiert werden. Für n gilt diesmal:
+
+$$
+1=n\cdot(4\cdot 0,06362775+4\cdot 0,04732312+ 2\cdot 0,02919938+ 0,056385
++2\cdot 0,0153045 + 2\cdot 0,01167975+ 0,022554)\\
+\Rightarrow n\approx 1,575
+$$
+
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/Schritt_5.2b.png)
