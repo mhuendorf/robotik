@@ -57,7 +57,7 @@ Dabei muss ggf. eine TF2-Transformation vorher ausgeführt werden, um in ein and
 
 ![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/map_server_viz.png)
 
-### Teil D
+### Teil C
 
 > Warum haben sich solche Rasterkarten in der mobilen Robotik bewährt?
 
@@ -68,6 +68,8 @@ Vorteile:
 - Cache optimal, insb. Nachbarfelder finden etc
 - Verwendung von Quadtrees möglich
 - bieten die Möglichkeit, Unsicherheiten in Sensorwerten sowie transiente Informationen zu repräsentieren
+
+### Teil D
 
 > Welche Aufgaben/Probleme können mithilfe einer solchen Karte gelöst werden? Nennen Sie zwei Beispiele.
 
