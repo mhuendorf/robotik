@@ -8,7 +8,15 @@ project(blatt05_gruppe11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  geometry_msgs
+  roscpp
+  roslaunch
   rospy
+  std_msgs
+  tf2_msgs
+  tf2_geometry_msgs
+  tf2_ros
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
@@ -68,7 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   geometry_msgs#   std_msgs#   tf2_msgs
 # )
 
 ################################################
@@ -102,8 +110,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES blatt05_gruppe11
-#  CATKIN_DEPENDS rospy
+#  LIBRARIES blatt05gruppe11
+#  CATKIN_DEPENDS geometry_msgs roscpp roslaunch rospy std_msgs tf2_msgs tf2_ros
 #  DEPENDS system_lib
 )
 
@@ -120,7 +128,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/blatt05_gruppe11.cpp
+#   src/${PROJECT_NAME}/blatt05gruppe11.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -131,7 +139,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/blatt05_gruppe11_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/blatt05gruppe11_node.cpp)
+
+add_executable(robo_control src/robo_control.cpp)
+target_link_libraries(robo_control ${catkin_LIBRARIES})
+
+add_executable(convolve_image src/convolve_image.cpp)
+target_link_libraries(convolve_image ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -195,7 +209,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_blatt05_gruppe11.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_blatt05gruppe11.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
