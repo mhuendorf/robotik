@@ -51,6 +51,12 @@ cellY = pose.y / info.resolution
 
 Dabei muss ggf. eine TF2-Transformation vorher ausgeführt werden, um in ein anderes Koordinatensystem zu transformieren.
 
+### Teil B
+
+> In ROS gibt es die Node map_server (http://wiki.ros.org/map_server), welche eine solche Karte von der Festplatte liest und sie in das ROS-System publisht. Eine Rasterkarte - passend zur AVZ-Gazebo-Simulation - befindet sich im Paket ceres_navigation unter maps/avz_6_floor_gazebo. Schreiben Sie eine Launch-File, die eine map_server-Node startet und diese Karte ins ROS-System lädt. Visualisieren Sie sich danach die Karte mit RViz.
+
+![](/Users/marcelhundorf/Uni/Master/3.%20Semester/robotik/Lösungen/src/blatt05_gruppe11_zusatz/Bilder/map_server_viz.png)
+
 ### Teil D
 
 > Warum haben sich solche Rasterkarten in der mobilen Robotik bewährt?
