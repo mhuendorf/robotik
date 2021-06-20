@@ -25,4 +25,6 @@ Die Kovarianzmatrix wird mit den partiellen Ableitungen (Jacobi-Matrix) berechne
 
 > Wann ist die Position der Berechnung im EKF genau bekannt?
 
-Fragestellung ungenau gestellt.
+Fragestellung ungenau gestellt, falls Bezug auf *genau*:
+
+In einem (erweiterten) Kalman-Filter ist die Position des Roboters nie zu 100% Genauigkeit bestimmbar. Andernfalls ist die Position nach der Korrektur des Fehlers bekannt und kann für weitere Schritte verwendet werden.
