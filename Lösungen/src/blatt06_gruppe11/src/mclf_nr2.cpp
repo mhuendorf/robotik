@@ -13,7 +13,10 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <Eigen/Dense>
 
-constexpr double kSigma = 0.1; // Standardabweisung
+#include <dynamic_reconfigure/server.h>
+#include <blatt06_gruppe11/DynConfigConfig.h>
+
+static double g_sigma = 0.6; // Standardabweisung
 
 struct PointEx {
   geometry_msgs::Point32 point;
@@ -32,25 +35,18 @@ static std::unique_ptr<geometry_msgs::TransformStamped> T_P1_to_OdomC{nullptr};
 
 // ----------------------------------------------------------------------------
 
-std::unordered_set<uint32_t> get_random_sample(uint32_t size, uint32_t n, std::mt19937& g) {
-  std::unordered_set<uint32_t> sample;
-  for (uint32_t i = size - n; i < size; ++i) {
-    uint32_t rng_index = std::uniform_int_distribution<uint32_t>(0, i)(g);
-    if (sample.find(rng_index) == sample.end()) {
-      sample.insert(rng_index);
-    } else {
-      sample.insert(i);
-    }
-  }
-  return sample;
-}
-
 double get_next_double() {
   std::uniform_real_distribution<double> dist(0.0, 1.0);
   return dist(rng_);
 }
 
 // ----------------------------------------------------------------------------
+
+void dynCallback(blatt06_gruppe11::DynConfigConfig &config) {
+  g_sigma = config.sigma;
+
+  ROS_INFO_STREAM("Dyn. sigma change: " << g_sigma);
+}
 
 void convert(const geometry_msgs::Transform& from, Eigen::Affine3d& to) {
   Eigen::Vector3d trans(from.translation.x, from.translation.y, from.translation.z);
@@ -173,8 +169,22 @@ void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publis
   p.z = msg.pose.pose.position.z;
   points_.push_back(PointEx::build(p, 1.0));
   max_weight_ = std::max(1.0, max_weight_);
-  // ROS_INFO_STREAM("Pose 1: " << p);
+  
+  ROS_INFO_STREAM("Initial Pose: " << p);
 
+  // Partikel generieren
+  std::normal_distribution<> distX(p.x, g_sigma);
+  std::normal_distribution<> distY(p.y, g_sigma);
+  // std::normal_distribution<> distZ(p.z, g_sigma);
+  size_t len = get_next_double() * 20;
+  for (size_t i = 0; i < len; ++i) {
+    p = {};
+    p.x = distX(rng_);
+    p.y = distY(rng_);
+    p.z = 0.0; // distZ(rng_);
+    points_.push_back(PointEx::build(p, 0.5));
+  }
+  
   // Daten veröffentlichen
   uint32_t pose_size = std::min(std::max(1u, static_cast<uint32_t>(points_.size()) / 2), 1000u);
   geometry_msgs::PoseArray result;
@@ -182,9 +192,7 @@ void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publis
   result.header.frame_id = "odom_combined";
   result.poses.resize(pose_size);
 
-  auto indices = get_random_sample(points_.size(), pose_size, rng_);
-  for (int index : indices) {
-    auto& p = points_.at(index);
+  for (const PointEx& p : points_) {
     geometry_msgs::Pose pose;
     pose.position.x = p.point.x;
     pose.position.y = p.point.y;
@@ -206,6 +214,9 @@ int main(int argc, char **argv) {
   ros::Publisher pub = n.advertise<geometry_msgs::PoseArray>("outPoseArray", 1);
   ros::Subscriber sub_a = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/initialpose", 1, std::bind(callback_a, std::placeholders::_1, pub));
   ros::Subscriber sub_b = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/robot_pose_ekf/odom_combined", 1, std::bind(callback, std::placeholders::_1, pub));
+
+  dynamic_reconfigure::Server<blatt06_gruppe11::DynConfigConfig> server;
+  server.setCallback(std::bind(&dynCallback, std::placeholders::_1));
 
   ros::spin();
   return 0;
