@@ -10,15 +10,13 @@ Bei der MCL wird die Position des Roboters über eine Partikelwolke repräsentie
 
 > Wozu dient dabei der Resampling-Schritt?
 
-Der Resampling-Schritt (bspw. Roulette-Rad-Verfahren) dient der Normierung der Gewichte von Parkikeln. Positionen mit hoher Gewichtung werden zusätzliche Partikel zugeordnet, sodass sich Cluster bilden, indem der Robotor sich mit hoher Wahrscheinlichkeit befindet. Partikel mit geringer Wahrscheinlichkeit werden dadurch eliminiert.
+Der Resampling-Schritt (bspw. Roulette-Rad-Verfahren) dient der Normierung der Gewichte von Partikeln. Positionen mit hoher Gewichtung werden zusätzliche Partikel zugeordnet, sodass sich Cluster bilden, indem der Robotor sich mit hoher Wahrscheinlichkeit befindet. Partikel mit geringer Wahrscheinlichkeit werden dadurch eliminiert.
 
 ### Teil C
 
 > Sind nicht-uniforme Rasterkarten (beispielsweise eine Quadtree-Repräsentation) für die MCL sinnvoll verwendbar? Wenn ja, wie? Wenn nein, warum nicht?
 
-???
-
-Nein, weil für MCL eine 2D-Matrix benötigt wird, die die jeweiligen Partikel repräsentiert. Bspw. bei einem Quadtree würden die vier zusätzlichen Felder keine Verwendung finden.
+Nein, weil für MCL eine 2D-Matrix benötigt wird, die die jeweiligen Partikel repräsentiert. Bspw. bei einem Quadtree würden die vier zusätzlichen Felder keine Verwendung finden. Zudem stellt ein Partikel einen Punkt dar und nicht eine Fläche, sodass eine Optimierung (zusammenfügen mehrerer Punkte/Flächen) keinen Vorteil bietet.
 
 ### Teil D
 
