@@ -164,6 +164,9 @@ target_link_libraries(mclf_nr2 ${catkin_LIBRARIES})
 add_executable(mclf src/mclf.cpp)
 target_link_libraries(mclf ${catkin_LIBRARIES})
 
+add_executable(scan_simulator_test src/scan_simulator_test.cpp)
+target_link_libraries(scan_simulator_test ${catkin_LIBRARIES} )
+
 #############
 ## Install ##
 #############
