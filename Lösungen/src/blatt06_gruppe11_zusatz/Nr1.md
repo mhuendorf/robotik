@@ -18,13 +18,13 @@ Der Resampling-Schritt (bspw. Roulette-Rad-Verfahren) dient der Normierung der G
 
 ???
 
-Nein, weil für MCL ein 2D-Matrix benötigt wird, die die jeweiligen Partikel repräsentiert. Bspw. bei einem Quadtree würden die vier zusätzlichen Felder keine Verwendung finden.
+Nein, weil für MCL eine 2D-Matrix benötigt wird, die die jeweiligen Partikel repräsentiert. Bspw. bei einem Quadtree würden die vier zusätzlichen Felder keine Verwendung finden.
 
 ### Teil D
 
 > Ist die Zahl der Partikel konstant oder variabel? Begründen Sie Ihre Antwort.
 
-Die Anzahl der Partikel aufgrund des Resampling-Schritts variabel. Partikel werden entsprechend ihrere Gewichtung vermehrt oder entfernt.
+Die Anzahl der Partikel sind aufgrund des Resampling-Schritts variabel. Partikel werden entsprechend ihrere Gewichtung vermehrt oder entfernt.
 
 ### Teil F
 
