@@ -158,6 +158,9 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
+add_executable(mclf_nr2 src/mclf_nr2.cpp)
+target_link_libraries(mclf_nr2 ${catkin_LIBRARIES})
+
 add_executable(mclf src/mclf.cpp)
 target_link_libraries(mclf ${catkin_LIBRARIES})
 

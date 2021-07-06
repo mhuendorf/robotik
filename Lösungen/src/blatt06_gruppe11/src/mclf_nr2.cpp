@@ -13,12 +13,6 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <Eigen/Dense>
 
-//
-// TODO:
-// - Konfiguration für Standardabweichung (Nr. 2a)
-// - Nr 4 - siehe `sensor_update` für b)
-//
-
 constexpr double kSigma = 0.1; // Standardabweisung
 
 struct PointEx {
@@ -91,10 +85,8 @@ geometry_msgs::TransformStamped inv(const geometry_msgs::TransformStamped& t) {
 }
 
 void resample();
-void sensor_update();
-void get_robot_position(ros::Publisher& pub);
 
-void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub_pos) {
+void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub) {
   geometry_msgs::PoseStamped p2_in_OdomC;
   p2_in_OdomC.header = msg.header;
   p2_in_OdomC.pose = msg.pose.pose;
@@ -150,35 +142,7 @@ void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publishe
   T_P1_to_OdomC->transform.rotation.z = p2_in_OdomC.pose.orientation.z;
   T_P1_to_OdomC->transform.rotation.w = p2_in_OdomC.pose.orientation.w;
 
-  sensor_update();
   resample();
-  get_robot_position(pub_pos);
-}
-
-void sensor_update() {
-  // Nr. 4b)
-  // Simulieren Sie dazu von jedem Partikel aus einen LaserScan in der Karte und
-  // vergleichen Sie diesen mit dem echten Scan.
-  //  FIXME: Was???
-  
-  // Wenn die simulierten Werte denen des echten Scans entsprechen soll die Gewichtung 1 sein.
-  // Sind die Werte jedoch sehr verschieden, soll das Gewicht gegen 0 gehen.
-
-  max_weight_ = 0.0;
-  for (PointEx& p : points_) {
-    double probability = get_next_double();
-    if (probability > 0.4) {
-      // Entspricht echten Wert
-      p.weight = 1;
-      max_weight_ = 1;
-    } else {
-      // TODO: Gewicht ist die Formel V
-      p.weight = 0.5;
-
-      max_weight_ = std::max(p.weight , max_weight_);
-    }
-  }
-  
 }
 
 void resample() {
@@ -202,45 +166,13 @@ void resample() {
   points_ = result;
 }
 
-void get_robot_position(ros::Publisher& pub) {
-  auto it = std::max_element(points_.begin(), points_.end(), [](auto const& lhs, auto const& rhs) {
-    return lhs.weight < rhs.weight;
-  });
-  if (it != points_.end()) {
-    const auto& p = (*it).point;
-
-    geometry_msgs::PoseStamped pose;
-    pose.header.stamp = ros::Time::now();
-    pose.header.frame_id = "odom_combined";
-    pose.pose.position.x = p.x;
-    pose.pose.position.y = p.y;
-    pose.pose.position.z = p.z;
-
-    pose.pose.orientation.x = 0;
-    pose.pose.orientation.y = 0;
-    pose.pose.orientation.z = 0;
-    pose.pose.orientation.w = 1;
-
-    pub.publish(pose);
-  }
-
-  // NOTE: Teil C:
-  // Gewichteter Mittelwert:
-  //   - Messungenauigkeiten werden berücksichtigt und entsprechend gewichtet
-  //   - Wert kann eine hohe Abweichung haben
-  //   - aufwendige Berechnung
-  // Partikel mit bestem Gewicht: 
-  //   - bester Wert wird ausgewählt
-  //   - schnell
-}
-
 void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub) {
   geometry_msgs::Point32 p;
   p.x = msg.pose.pose.position.x;
   p.y = msg.pose.pose.position.y;
   p.z = msg.pose.pose.position.z;
-  points_.push_back(PointEx::build(p, 0.5));
-  max_weight_ = std::max(0.5, max_weight_);
+  points_.push_back(PointEx::build(p, 1.0));
+  max_weight_ = std::max(1.0, max_weight_);
   ROS_INFO_STREAM("Pose 1: " << p);
 
   // resample();
@@ -271,12 +203,11 @@ void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publis
 }
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "nr2");
+  ros::init(argc, argv, "mclf_nr2");
   ros::NodeHandle n;
   ros::Publisher pub = n.advertise<geometry_msgs::PoseArray>("outPoseArray", 1);
-  ros::Publisher pub_pos = n.advertise<geometry_msgs::PoseStamped>("outPosition", 1);
   ros::Subscriber sub_a = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/initialpose", 1, std::bind(callback_a, std::placeholders::_1, pub));
-  ros::Subscriber sub_b = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/robot_pose_ekf/odom_combined", 1, std::bind(callback, std::placeholders::_1, pub_pos));
+  ros::Subscriber sub_b = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/robot_pose_ekf/odom_combined", 1, std::bind(callback, std::placeholders::_1, pub));
 
   ros::spin();
   return 0;
