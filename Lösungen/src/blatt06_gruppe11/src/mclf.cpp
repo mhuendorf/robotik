@@ -193,12 +193,11 @@ void sensor_update() {
       max_weight_ = 1;
     } else {
       // TODO: Gewicht ist die Formel V
-      p.weight = 0.5;
+      p.weight = get_next_double() * 0.5;
 
       max_weight_ = std::max(p.weight , max_weight_);
     }
   }
-  
 }
 
 void resample() {
@@ -242,6 +241,27 @@ void get_robot_position(ros::Publisher& pub) {
     pose.pose.orientation.w = 1;
 
     pub.publish(pose);
+
+
+    // 4d) ----------------------
+
+    geometry_msgs::TransformStamped trans_map;
+    trans_map.header.frame_id = "base_link";
+    trans_map.header.stamp = ros::Time::now();
+    trans_map.transform.translation.x = 0;
+    trans_map.transform.translation.y = 0;
+    trans_map.transform.translation.z = 0;
+
+    trans_map.transform.rotation.x = 0;
+    trans_map.transform.rotation.y = 0;
+    trans_map.transform.rotation.z = 0;
+    trans_map.transform.rotation.w = 1;
+
+    geometry_msgs::PoseStamped out_map;
+    tf2::doTransform(pose, out_map, trans_map);
+
+    pub.publish(out_map);
+    // --------------------------
   }
 
   // NOTE: Teil C:
@@ -252,6 +272,7 @@ void get_robot_position(ros::Publisher& pub) {
   // Partikel mit bestem Gewicht: 
   //   - bester Wert wird ausgewählt
   //   - schnell
+  //   - Position des Roboters kann "springen", weil der bester Wert sind kontinuierlich ändert
 }
 
 void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub) {
