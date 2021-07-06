@@ -32,6 +32,7 @@ struct PointEx {
 
 static std::random_device rng_device_{};
 static std::mt19937 rng_{rng_device_()};
+static bool ready_{false};
 static double max_weight_{0};
 static std::vector<PointEx> points_;
 static std::unique_ptr<geometry_msgs::TransformStamped> T_P1_to_OdomC{nullptr};
@@ -54,6 +55,10 @@ std::unordered_set<uint32_t> get_random_sample(uint32_t size, uint32_t n, std::m
 double get_next_double() {
   std::uniform_real_distribution<double> dist(0.0, 1.0);
   return dist(rng_);
+}
+
+bool dblEqual(float a, float b, float epsilon = 0.01) {
+    return fabs(a - b) <= ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
 
 // ----------------------------------------------------------------------------
@@ -95,6 +100,30 @@ void sensor_update();
 void get_robot_position(ros::Publisher& pub);
 
 void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub_pos) {
+  if (!ready_) {
+    return;
+  }
+
+  static geometry_msgs::Point32 g_lastPoint;
+
+  // Throttle, um nicht OOM zu laufen
+  if (!dblEqual(g_lastPoint.x, msg.pose.pose.position.x) || 
+    !dblEqual(g_lastPoint.y, msg.pose.pose.position.y) ||
+    !dblEqual(g_lastPoint.z, msg.pose.pose.position.z)) {
+    geometry_msgs::Point32 p;
+    p.x = msg.pose.pose.position.x;
+    p.y = msg.pose.pose.position.y;
+    p.z = msg.pose.pose.position.z;
+    points_.push_back(PointEx::build(p, 0.5));
+    max_weight_ = std::max(0.5, max_weight_);
+
+    g_lastPoint = p;
+
+    // ROS_INFO_STREAM(points_.size());
+  }
+
+  // ROS_INFO_STREAM(msg);
+
   geometry_msgs::PoseStamped p2_in_OdomC;
   p2_in_OdomC.header = msg.header;
   p2_in_OdomC.pose = msg.pose.pose;
@@ -228,7 +257,7 @@ void get_robot_position(ros::Publisher& pub) {
   // Gewichteter Mittelwert:
   //   - Messungenauigkeiten werden berücksichtigt und entsprechend gewichtet
   //   - Wert kann eine hohe Abweichung haben
-  //   - aufwendige Berechnung
+  //   - aufwendige(rere) Berechnung
   // Partikel mit bestem Gewicht: 
   //   - bester Wert wird ausgewählt
   //   - schnell
@@ -241,9 +270,9 @@ void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publis
   p.z = msg.pose.pose.position.z;
   points_.push_back(PointEx::build(p, 0.5));
   max_weight_ = std::max(0.5, max_weight_);
-  ROS_INFO_STREAM("Pose 1: " << p);
+  ready_ = true;
 
-  // resample();
+  // ROS_INFO_STREAM("Pose 1: " << p);
 
   // Daten veröffentlichen
   uint32_t pose_size = std::min(std::max(1u, static_cast<uint32_t>(points_.size()) / 2), 1000u);

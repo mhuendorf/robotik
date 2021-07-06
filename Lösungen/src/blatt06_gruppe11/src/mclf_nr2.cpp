@@ -173,9 +173,7 @@ void callback_a(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publis
   p.z = msg.pose.pose.position.z;
   points_.push_back(PointEx::build(p, 1.0));
   max_weight_ = std::max(1.0, max_weight_);
-  ROS_INFO_STREAM("Pose 1: " << p);
-
-  // resample();
+  // ROS_INFO_STREAM("Pose 1: " << p);
 
   // Daten veröffentlichen
   uint32_t pose_size = std::min(std::max(1u, static_cast<uint32_t>(points_.size()) / 2), 1000u);
