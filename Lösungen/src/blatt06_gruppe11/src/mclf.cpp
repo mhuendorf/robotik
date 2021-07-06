@@ -88,9 +88,9 @@ geometry_msgs::TransformStamped inv(const geometry_msgs::TransformStamped& t) {
 
 void resample();
 void sensor_update();
-void get_robot_position(ros::Publisher& pub);
+void get_robot_position(ros::Publisher& pub, ros::Publisher& pub2);
 
-void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub_pos) {
+void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publisher& pub_pos, ros::Publisher& pub_pos2) {
   if (!ready_) {
     return;
   }
@@ -172,7 +172,7 @@ void callback(const geometry_msgs::PoseWithCovarianceStamped& msg, ros::Publishe
 
   sensor_update();
   resample();
-  get_robot_position(pub_pos);
+  get_robot_position(pub_pos, pub_pos2);
 }
 
 void sensor_update() {
@@ -221,7 +221,7 @@ void resample() {
   points_ = result;
 }
 
-void get_robot_position(ros::Publisher& pub) {
+void get_robot_position(ros::Publisher& pub, ros::Publisher& pub2) {
   auto it = std::max_element(points_.begin(), points_.end(), [](auto const& lhs, auto const& rhs) {
     return lhs.weight < rhs.weight;
   });
@@ -260,7 +260,7 @@ void get_robot_position(ros::Publisher& pub) {
     geometry_msgs::PoseStamped out_map;
     tf2::doTransform(pose, out_map, trans_map);
 
-    pub.publish(out_map);
+    pub2.publish(out_map);
     // --------------------------
   }
 
@@ -327,8 +327,9 @@ int main(int argc, char **argv) {
   ros::NodeHandle n;
   ros::Publisher pub = n.advertise<geometry_msgs::PoseArray>("outPoseArray", 1);
   ros::Publisher pub_pos = n.advertise<geometry_msgs::PoseStamped>("outPosition", 1);
+  ros::Publisher pub_pos2 = n.advertise<geometry_msgs::PoseStamped>("outPositionD", 1);
   ros::Subscriber sub_a = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/initialpose", 1, std::bind(callback_a, std::placeholders::_1, pub));
-  ros::Subscriber sub_b = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/robot_pose_ekf/odom_combined", 1, std::bind(callback, std::placeholders::_1, pub_pos));
+  ros::Subscriber sub_b = n.subscribe<geometry_msgs::PoseWithCovarianceStamped, const geometry_msgs::PoseWithCovarianceStamped&>("/robot_pose_ekf/odom_combined", 1, std::bind(callback, std::placeholders::_1, pub_pos, pub_pos2));
 
   dynamic_reconfigure::Server<blatt06_gruppe11::DynConfigConfig> server;
   server.setCallback(std::bind(&dynCallback, std::placeholders::_1));
